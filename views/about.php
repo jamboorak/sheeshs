@@ -11,7 +11,7 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - Villa Soledad</title>
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>css/style.css">
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>css/style.css?v=20260919-system1">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .about-hero {
@@ -140,14 +140,14 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : '';
         }
     </style>
 </head>
-<body>
+<body class="public-page">
     <!-- Header & Navigation -->
     <header class="header">
         <div class="container">
             <div class="nav">
                 <a href="<?php echo SITE_URL; ?>index.php" class="logo">
-                    <i class="fas fa-hotel"></i>
-                    Villa Soledad
+                    <img src="<?php echo SITE_URL; ?>images/logo.jpg" alt="Villa Soledad Garden Resort Logo" style="height: 44px; width: 44px; object-fit: cover; border-radius: 50%;">
+                    <span>Villa Soledad Garden Resort</span>
                 </a>
                 <nav class="nav-links">
                     <a href="<?php echo SITE_URL; ?>index.php">Home</a>

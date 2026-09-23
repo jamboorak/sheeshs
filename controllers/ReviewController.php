@@ -48,13 +48,12 @@ class ReviewController {
         if ($result['success']) {
             $activityDatabase = new Database();
             logUserActivity($activityDatabase->getConnection(), $userId, 'review_created', 'Created a review');
-            $_SESSION['success'] = $result['message'];
+            $this->redirect(SITE_URL . 'index.php?review_status=created#reviews');
         } else {
             $_SESSION['error'] = $result['message'];
             $_SESSION['form_data'] = $_POST;
+            $this->redirect(SITE_URL . 'index.php#reviews');
         }
-        
-        $this->redirect(SITE_URL . 'index.php#reviews');
     }
     
     /**
@@ -108,13 +107,18 @@ class ReviewController {
         if ($result['success']) {
             $activityDatabase = new Database();
             logUserActivity($activityDatabase->getConnection(), $userId, 'review_updated', 'Updated review #' . (int)$reviewId);
-            $_SESSION['success'] = $result['message'];
         } else {
             $_SESSION['error'] = $result['message'];
             $_SESSION['form_data'] = $_POST;
         }
         
-        $this->redirect(SITE_URL . 'reviews.php');
+        $returnTo = ($_POST['return_to'] ?? '') === 'index' ? 'index.php' : 'reviews.php';
+        if ($result['success']) {
+            $returnTo .= '?review_status=updated#reviews';
+        } else {
+            $returnTo .= '#reviews';
+        }
+        $this->redirect(SITE_URL . $returnTo);
     }
     
     /**

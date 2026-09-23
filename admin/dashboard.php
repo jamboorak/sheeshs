@@ -126,11 +126,15 @@ if ($activityTo !== '') {
     $activityParams[] = $activityTo . ' 23:59:59';
     $activityTypes .= 's';
 }
+$hasActivityFilter = $activityAction !== '' || $activityUserId > 0 || $activityFrom !== '' || $activityTo !== '';
 $activitySql = "SELECT a.*, COALESCE(u.fullname, u.email, 'Unknown user') AS user_name, u.email
                 FROM user_activity_log a
                 LEFT JOIN users u ON u.id = a.user_id
                 WHERE " . implode(' AND ', $activityWhere) . "
-                ORDER BY a.created_at DESC LIMIT 100";
+                ORDER BY a.created_at DESC";
+if (!$hasActivityFilter) {
+    $activitySql .= " LIMIT 10";
+}
 $activityStmt = $conn->prepare($activitySql);
 $activityLog = [];
 if ($activityStmt) {
@@ -177,19 +181,9 @@ foreach ($statsQueries as $key => $query) {
 }
 
 // Fetch pending reservations for the manage reservations section
-$recentReservationsSql = "SELECT r.id, r.check_in, r.check_out, r.adults, r.children, r.seniors, r.total_amount, COALESCE(NULLIF(r.status, ''), 'pending') AS status, COALESCE(r.tour_type, 'day') AS tour_type, {$guestNameExpr} as name, COALESCE(NULLIF(TRIM(CONCAT(COALESCE(gi.mobile_country_code, ''), COALESCE(gi.mobile_number, ''))), ''), u.phone, '') AS guest_phone, GROUP_CONCAT(CONCAT(ri.item_name, ' (', ri.item_type, ')') SEPARATOR ', ') as items FROM reservations r LEFT JOIN users u ON r.user_id = u.id LEFT JOIN guest_info gi ON r.guest_info_id = gi.id LEFT JOIN reservation_items ri ON r.id = ri.reservation_id WHERE COALESCE(NULLIF(r.status, ''), 'pending') = 'pending' GROUP BY r.id ORDER BY r.created_at DESC LIMIT 10";
+$recentReservationsSql = "SELECT r.id, r.check_in, r.check_out, r.adults, r.children, r.seniors, r.total_amount, COALESCE(NULLIF(r.status, ''), 'pending') AS status, COALESCE(r.tour_type, 'day') AS tour_type, {$guestNameExpr} as name, COALESCE(NULLIF(TRIM(CONCAT(COALESCE(gi.mobile_country_code, ''), COALESCE(gi.mobile_number, ''))), ''), u.phone, '') AS guest_phone, GROUP_CONCAT(CONCAT(ri.item_name, ' ', ri.item_type) SEPARATOR ', ') as items FROM reservations r LEFT JOIN users u ON r.user_id = u.id LEFT JOIN guest_info gi ON r.guest_info_id = gi.id LEFT JOIN reservation_items ri ON r.id = ri.reservation_id WHERE COALESCE(NULLIF(r.status, ''), 'pending') = 'pending' GROUP BY r.id ORDER BY r.created_at DESC LIMIT 10";
 $recentReservationsResult = $conn->query($recentReservationsSql);
 $recentReservations = $recentReservationsResult ? $recentReservationsResult->fetch_all(MYSQLI_ASSOC) : [];
-foreach ($recentReservations as &$pendingReservation) {
-    $pendingReservation['check_out'] = normalizeTourCheckoutDate(
-        $pendingReservation['check_in'] ?? '',
-        $pendingReservation['check_out'] ?? '',
-        $pendingReservation['tour_type'] ?? 'day'
-    );
-}
-unset($pendingReservation);
-
-// Notifications: pending reservations awaiting approval in Manage Reservations
 $notificationSql = "SELECT r.id, r.check_in, r.check_out, COALESCE(NULLIF(r.status, ''), 'pending') AS status,
                            {$guestNameExpr} AS name,
                            GROUP_CONCAT(CONCAT(ri.item_name, ' (', ri.item_type, ')') SEPARATOR ', ') AS items
@@ -199,7 +193,8 @@ $notificationSql = "SELECT r.id, r.check_in, r.check_out, COALESCE(NULLIF(r.stat
                     LEFT JOIN reservation_items ri ON r.id = ri.reservation_id
                     WHERE COALESCE(NULLIF(r.status, ''), 'pending') = 'pending'
                     GROUP BY r.id
-                    ORDER BY r.created_at DESC";
+                    ORDER BY r.created_at DESC
+                    LIMIT 5";
 $notificationResult = $conn->query($notificationSql);
 $reservationNotifications = $notificationResult ? $notificationResult->fetch_all(MYSQLI_ASSOC) : [];
 $notificationCount = count($reservationNotifications);
@@ -425,6 +420,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errorMessage = 'Unable to prepare room save query.';
             }
         }
+    } elseif ($roomAction === 'delete_archived_room') {
+        $roomId = (int)($_POST['room_id'] ?? 0);
+        if ($roomId > 0) {
+            $galleryStmt = $conn->prepare('DELETE FROM property_gallery_images WHERE property_type = ? AND property_id = ?');
+            if ($galleryStmt) { $galleryType = 'room'; $galleryStmt->bind_param('si', $galleryType, $roomId); $galleryStmt->execute(); }
+            $stmt = $conn->prepare('DELETE FROM rooms WHERE id = ? AND archived = 1');
+            if ($stmt) { $stmt->bind_param('i', $roomId); $stmt->execute(); }
+        }
+        header('Location: dashboard.php?section=rooms&notice=deleted&item=room');
+        exit();
     } elseif ($roomAction === 'delete_room' || $roomAction === 'archive_room') {
         $roomId = isset($_POST['room_id']) ? (int)$_POST['room_id'] : 0;
         if ($roomId > 0) {
@@ -504,6 +509,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $cottageErrorMessage = 'Unable to prepare cottage save query.';
                 }
             }
+        } elseif ($cottageAction === 'delete_archived_cottage') {
+            $cottageId = (int)($_POST['cottage_id'] ?? 0);
+            if ($cottageId > 0) {
+                $galleryStmt = $conn->prepare('DELETE FROM property_gallery_images WHERE property_type = ? AND property_id = ?');
+                if ($galleryStmt) { $galleryType = 'cottage'; $galleryStmt->bind_param('si', $galleryType, $cottageId); $galleryStmt->execute(); }
+                $stmt = $conn->prepare('DELETE FROM cottages WHERE id = ? AND archived = 1');
+                if ($stmt) { $stmt->bind_param('i', $cottageId); $stmt->execute(); }
+            }
+            header('Location: dashboard.php?section=cottages&notice=deleted&item=cottage');
+            exit();
         } elseif ($cottageAction === 'delete_cottage' || $cottageAction === 'archive_cottage') {
             $cottageId = isset($_POST['cottage_id']) ? (int)$_POST['cottage_id'] : 0;
             if ($cottageId > 0) {
@@ -579,6 +594,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $poolErrorMessage = 'Unable to prepare pool save query.';
                 }
             }
+        } elseif ($poolAction === 'delete_archived_pool') {
+            $poolId = (int)($_POST['pool_id'] ?? 0);
+            if ($poolId > 0) {
+                $stmt = $conn->prepare('DELETE FROM pools WHERE id = ? AND archived = 1');
+                if ($stmt) { $stmt->bind_param('i', $poolId); $stmt->execute(); }
+            }
+            header('Location: dashboard.php?section=pools&notice=deleted&item=pool');
+            exit();
         } elseif ($poolAction === 'delete_pool' || $poolAction === 'archive_pool') {
             $poolId = isset($_POST['pool_id']) ? (int)$_POST['pool_id'] : 0;
             if ($poolId > 0) {
@@ -752,6 +775,17 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
         }
     </script>
     <style>
+        body.admin-page {
+            background: linear-gradient(180deg, #edf5fb 0%, #f8fbff 100%);
+            color: #173b5d;
+        }
+
+        .admin-page .header {
+            background: linear-gradient(135deg, rgba(8, 36, 58, 0.96) 0%, rgba(30, 92, 143, 0.96) 100%);
+            box-shadow: 0 2px 12px rgba(20, 59, 92, 0.12);
+            padding: 0.9rem 0;
+        }
+
         .admin-page .container {
             width: 100%;
             max-width: none;
@@ -762,22 +796,25 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
         .admin-container {
             display: grid;
             grid-template-columns: 250px 1fr;
-            gap: 0;
-            min-height: calc(100vh - 200px);
+            gap: 1.25rem;
+            min-height: calc(100vh - 140px);
             width: 100%;
-            margin: 0;
+            margin: 1.5rem auto 2rem;
+            max-width: 1400px;
+            padding: 0 1rem;
         }
 
         .admin-sidebar {
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 0;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.25rem;
+            border-radius: 18px;
             position: sticky;
-            top: 80px;
-            height: calc(100vh - 80px);
+            top: 92px;
+            height: calc(100vh - 110px);
             align-self: start;
             overflow-y: auto;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 14px 28px rgba(18, 58, 91, 0.08);
+            border: 1px solid rgba(150, 178, 201, 0.22);
         }
 
         .header .container {
@@ -808,10 +845,11 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
         }
 
         .admin-content {
-            background: var(--white);
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 18px;
+            box-shadow: 0 14px 28px rgba(18, 58, 91, 0.08);
             padding: 2rem;
+            border: 1px solid rgba(150, 178, 201, 0.2);
         }
 
         .admin-section {
@@ -824,9 +862,9 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
 
         .section-title {
             font-size: 1.8rem;
-            color: var(--primary-blue);
+            color: #163d60;
             margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--accent-orange);
+            border-bottom: 2px solid #ff7a3d;
             padding-bottom: 0.5rem;
         }
 
@@ -838,11 +876,12 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
         }
 
         .stat-card {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+            background: linear-gradient(135deg, #0e3b5c 0%, #2d7fc2 100%);
             color: var(--white);
             padding: 1.5rem;
-            border-radius: 10px;
+            border-radius: 16px;
             text-align: center;
+            box-shadow: 0 18px 30px rgba(16, 57, 94, 0.12);
         }
 
         .stat-card i {
@@ -865,6 +904,11 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
         .table-container {
             overflow-x: auto;
             margin-bottom: 2rem;
+        }
+
+        .items-booked-cell {
+            white-space: nowrap;
+            min-width: 180px;
         }
 
         table {
@@ -920,6 +964,27 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
 
         .food-tab.btn-primary:hover {
             background: #1e3a8a;
+        }
+
+        .admin-food-category-select {
+            width: min(100%, 240px);
+            min-height: 42px;
+            padding: 0.55rem 2.5rem 0.55rem 0.9rem;
+            border: 1px solid rgba(26, 58, 91, 0.25);
+            border-radius: 8px;
+            background: linear-gradient(180deg, #ffffff 0%, #f7fafd 100%);
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, #1b486f 50%), linear-gradient(135deg, #1b486f 50%, transparent 50%);
+            background-position: calc(100% - 22px) calc(50% - 3px), calc(100% - 15px) calc(50% - 3px);
+            background-size: 7px 7px, 7px 7px;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.02);
         }
 
         .btn-primary {
@@ -1690,7 +1755,7 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
                             <form method="post" action="dashboard.php?section=rooms" style="display:inline-block;" data-delete-form="room" onsubmit="event.preventDefault(); openDeleteConfirmModal(this);">
                                 <input type="hidden" name="room_action" value="delete_room">
                                 <input type="hidden" name="room_id" value="<?php echo (int)$room['id']; ?>">
-                                <button type="submit" class="btn-small btn-delete">Archive</button>
+                                <button type="submit" class="btn-small btn-delete">Delete</button>
                             </form>
                         </div>
                     </div>
@@ -2304,7 +2369,7 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
                             <form method="post" action="dashboard.php?section=cottages" style="display:inline-block;" data-delete-form="cottage" onsubmit="event.preventDefault(); openDeleteConfirmModal(this);">
                                 <input type="hidden" name="cottage_action" value="delete_cottage">
                                 <input type="hidden" name="cottage_id" value="<?php echo (int)$cottage['id']; ?>">
-                                <button type="submit" class="btn-small btn-delete">Archive</button>
+                                        <button type="submit" class="btn-small btn-delete">Delete</button>
                             </form>
                         </div>
                     </div>
@@ -2587,7 +2652,7 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
                             <form method="post" action="dashboard.php?section=pools" style="display:inline-block;" data-delete-form="pool" onsubmit="event.preventDefault(); openDeleteConfirmModal(this);">
                                 <input type="hidden" name="pool_action" value="delete_pool">
                                 <input type="hidden" name="pool_id" value="<?php echo (int)$pool['id']; ?>">
-                                <button type="submit" class="btn-small btn-delete">Archive</button>
+                                        <button type="submit" class="btn-small btn-delete">Delete</button>
                             </form>
                         </div>
                     </div>
@@ -2608,20 +2673,22 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
                         <?php endif; ?>
                     </div>
 
-                    <!-- Category Tabs -->
-                    <div style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                        <button class="food-tab btn-primary" data-category="all" onclick="filterFoodByCategory('all')">All</button>
-                        <button class="food-tab" data-category="Starters" onclick="filterFoodByCategory('Starters')">Starters</button>
-                        <button class="food-tab" data-category="Main Course" onclick="filterFoodByCategory('Main Course')">Main Course</button>
-                        <button class="food-tab" data-category="Soups" onclick="filterFoodByCategory('Soups')">Soups</button>
-                        <button class="food-tab" data-category="All Day Breakfast" onclick="filterFoodByCategory('All Day Breakfast')">All Day Breakfast</button>
-                        <button class="food-tab" data-category="Hot Beverages" onclick="filterFoodByCategory('Hot Beverages')">Hot Beverages</button>
-                        <button class="food-tab" data-category="Non-Alcoholic" onclick="filterFoodByCategory('Non-Alcoholic')">Non-Alcoholic</button>
-                        <button class="food-tab" data-category="Sides" onclick="filterFoodByCategory('Sides')">Sides</button>
-                        <button class="food-tab" data-category="Vegetables" onclick="filterFoodByCategory('Vegetables')">Vegetables</button>
-                        <button class="food-tab" data-category="Rice Meals" onclick="filterFoodByCategory('Rice Meals')">Rice Meals</button>
-                        <button class="food-tab" data-category="Dessert" onclick="filterFoodByCategory('Dessert')">Dessert</button>
-                        <button class="food-tab" data-category="Cocktails" onclick="filterFoodByCategory('Cocktails')">Cocktails</button>
+                    <!-- Category Dropdown -->
+                    <div style="margin-bottom: 1.5rem; display: flex; justify-content: flex-start;">
+                        <select id="adminFoodCategorySelect" class="admin-food-category-select" aria-label="Filter food by category">
+                            <option value="all" selected>All</option>
+                            <option value="Starters">Starters</option>
+                            <option value="Main Course">Main Course</option>
+                            <option value="Soups">Soups</option>
+                            <option value="All Day Breakfast">All Day Breakfast</option>
+                            <option value="Hot Beverages">Hot Beverages</option>
+                            <option value="Non-Alcoholic">Non-Alcoholic</option>
+                            <option value="Sides">Sides</option>
+                            <option value="Vegetables">Vegetables</option>
+                            <option value="Rice Meals">Rice Meals</option>
+                            <option value="Dessert">Dessert</option>
+                            <option value="Cocktails">Cocktails</option>
+                        </select>
                     </div>
 
                     <!-- Add Food Modal -->
@@ -2741,14 +2808,10 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
                 window.filterFoodByCategory = function(category) {
                     currentCategory = category;
 
-                    // Update tab styling
-                    document.querySelectorAll('.food-tab').forEach(tab => {
-                        if (tab.dataset.category === category) {
-                            tab.classList.add('btn-primary');
-                        } else {
-                            tab.classList.remove('btn-primary');
-                        }
-                    });
+                    const categorySelect = document.getElementById('adminFoodCategorySelect');
+                    if (categorySelect && categorySelect.value !== category) {
+                        categorySelect.value = category;
+                    }
 
                     // Apply filter
                     filterFoodRows();
@@ -2773,6 +2836,14 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
                 document.addEventListener('DOMContentLoaded', function () {
                     foodRows = Array.from(document.querySelectorAll('.food-table-row'));
                     foodEmptyRow = document.getElementById('foodNoResultsRow');
+
+                    const categorySelect = document.getElementById('adminFoodCategorySelect');
+                    if (categorySelect) {
+                        categorySelect.addEventListener('change', function () {
+                            filterFoodByCategory(this.value);
+                        });
+                    }
+
                     filterFoodRows();
                 });
                 </script>
@@ -3697,34 +3768,6 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
                         '<p style="margin: 0.25rem 0;"><strong>Net Revenue:</strong> ₱' + summary.net_revenue.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>' +
                         '<p style="margin: 0.25rem 0;"><strong>Total Bookings:</strong> ' + summary.total_bookings + '</p>' +
                     '</div>' +
-                    '<div style="margin-top: 1.5rem; padding: 1rem; background: #fff5f5; border-left: 4px solid #ef4444; border-radius: 8px;">' +
-                        '<h4 style="color: #dc2626; margin: 0 0 0.5rem 0;">Maintenance/Repair Fee Details</h4>' +
-                        (summary.fee_details && summary.fee_details.length > 0 ?
-                            '<table style="width: 100%; border-collapse: collapse; font-size: 0.95rem; color: #1f2937;">' +
-                                '<thead>' +
-                                    '<tr style="background: #fee2e2;">' +
-                                        '<th style="padding: 0.7rem; text-align: left; color: #7f1d1d; font-weight: 800;">Date</th>' +
-                                        '<th style="padding: 0.7rem; text-align: left; color: #7f1d1d; font-weight: 800;">Type</th>' +
-                                        '<th style="padding: 0.7rem; text-align: left; color: #7f1d1d; font-weight: 800;">Facility</th>' +
-                                        '<th style="padding: 0.7rem; text-align: left; color: #7f1d1d; font-weight: 800;">Name</th>' +
-                                        '<th style="padding: 0.7rem; text-align: right; color: #7f1d1d; font-weight: 800;">Amount</th>' +
-                                    '</tr>' +
-                                '</thead>' +
-                                '<tbody>' +
-                                    summary.fee_details.map(fee =>
-                                        '<tr>' +
-                                            '<td style="padding: 0.7rem; border-bottom: 1px solid #fecaca; color: #111827; font-weight: 600;">' + fee.date_incurred + '</td>' +
-                                            '<td style="padding: 0.7rem; border-bottom: 1px solid #fecaca; color: #111827; font-weight: 600; text-transform: capitalize;">' + fee.fee_type + '</td>' +
-                                            '<td style="padding: 0.7rem; border-bottom: 1px solid #fecaca; color: #111827; font-weight: 600; text-transform: capitalize;">' + fee.facility_type + '</td>' +
-                                            '<td style="padding: 0.7rem; border-bottom: 1px solid #fecaca; color: #111827; font-weight: 600;">' + fee.facility_name + '</td>' +
-                                            '<td style="padding: 0.7rem; border-bottom: 1px solid #fecaca; color: #111827; text-align: right; font-weight: 800;">₱' + fee.amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
-                                        '</tr>'
-                                    ).join('') +
-                                '</tbody>' +
-                            '</table>' :
-                            '<p style="margin: 0; color: #6b7280;">No maintenance/repair fees recorded for this period.</p>'
-                        ) +
-                    '</div>' +
                 '</div>';
 
                 reportResults.innerHTML = reportContent;
@@ -3836,29 +3879,10 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
         }
 
         function printMaintenanceReport() {
-            const reportContent = document.getElementById('reportResults').innerHTML;
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Maintenance Report - Villa Soledad Garden Resort</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 20px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                        th { background-color: #4169E1; color: white; }
-                        .summary { background-color: #f9fafb; padding: 15px; margin: 20px 0; border-radius: 5px; }
-                        h3 { color: #4169E1; }
-                    </style>
-                </head>
-                <body>
-                    ${reportContent}
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
+            const report = document.getElementById('reportResults')?.cloneNode(true);
+            if (!report) return;
+            report.querySelectorAll('button').forEach(button => button.remove());
+            printUniversalReport('Maintenance Report - Villa Soledad Garden Resort', report.innerHTML);
         }
 
         function destroyCustomerAnalyticsCharts() {
@@ -4338,60 +4362,47 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
                 }
             });
 
+            printUniversalReport('Customer Analytics Report - Villa Soledad Garden Resort', clone.innerHTML);
+        }
+
+        function printRevenueReport() {
+            const report = document.getElementById('revenueReportContent')?.cloneNode(true);
+            if (!report) return;
+            report.querySelectorAll('button').forEach(button => button.remove());
+            printUniversalReport('Monthly Revenue Report - Villa Soledad Garden Resort', report.innerHTML);
+        }
+
+        function printUniversalReport(title, content) {
             const printWindow = window.open('', '_blank');
             if (!printWindow) {
                 alert('Please allow pop-ups to print this report.');
                 return;
             }
-
-            printWindow.document.write('<!DOCTYPE html><html><head>' +
-                '<title>Customer Analytics Report - Villa Soledad Garden Resort</title>' +
-                '<style>' +
-                    'body { font-family: Arial, sans-serif; padding: 20px; color: #111827; background: #ffffff; }' +
-                    'h3, h4 { color: #1e3a8a; }' +
-                    'img { max-width: 100%; height: auto; }' +
-                    'svg { max-width: 100%; height: auto; }' +
-                    '#printCustomerReportBtn { display: none !important; }' +
-                    '@media print { body { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }' +
-                '</style>' +
-                '</head><body>' +
-                    clone.innerHTML +
-                    '<script>' +
-                        'window.onload = function() {' +
-                            'window.print();' +
-                            'window.close();' +
-                        '};' +
-                    '<\/script>' +
-                '</body></html>'
-            );
-            printWindow.document.close();
-        }
-
-        function printRevenueReport() {
-            const reportContent = document.getElementById('revenueReportContent').innerHTML;
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write('<!DOCTYPE html><html><head>' +
-                '<title>Monthly Revenue Report - Villa Soledad Garden Resort</title>' +
-                '<style>' +
-                    'body { font-family: Arial, sans-serif; padding: 20px; }' +
-                    'table { width: 100%; border-collapse: collapse; margin: 20px 0; }' +
-                    'th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }' +
-                    'th { background: #1e3a8a; color: white; }' +
-                    'tr:nth-child(even) { background: #f9f9f9; }' +
-                    '.summary { background: #f0f4ff; padding: 15px; border-radius: 8px; margin-top: 20px; }' +
-                    'h3 { color: #1e3a8a; }' +
-                    '@media print { body { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }' +
-                '</style>' +
-                '</head><body>' +
-                    reportContent +
-                    '<script>' +
-                        'window.onload = function() {' +
-                            'window.print();' +
-                            'window.close();' +
-                        '};' +
-                    '<\/script>' +
-                '</body></html>'
-            );
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${title}</title>
+                    <style>
+                        :root { color-scheme: light; }
+                        * { box-sizing: border-box; }
+                        body { margin: 0; padding: 28px; font-family: Arial, sans-serif; color: #1f2937; background: #ffffff; }
+                        h3, h4 { color: #1e3a8a !important; }
+                        p { line-height: 1.5; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { border: 1px solid #dbe3ea; padding: 10px; text-align: left; }
+                        th { background: #1e3a8a !important; color: #ffffff !important; }
+                        tr:nth-child(even) { background: #f8fafc; }
+                        button { display: none !important; }
+                        img { max-width: 100%; height: auto; }
+                        @media print {
+                            body { padding: 0; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+                        }
+                    </style>
+                </head>
+                <body>${content}<script>window.onload = function() { window.print(); window.close(); };<\/script></body>
+                </html>
+            `);
             printWindow.document.close();
         }
 
@@ -4835,6 +4846,13 @@ $reviews = $reviewsResult->fetch_all(MYSQLI_ASSOC);
                                 <input type="hidden" name="<?php echo $archiveGroup['action']; ?>_id" value="<?php echo (int)$archivedItem['id']; ?>">
                                 <button type="submit" class="btn-small btn-approve"><i class="fas fa-rotate-left"></i> Restore</button>
                             </form>
+                            <?php if (in_array($archiveGroup['action'], ['room', 'cottage', 'pool'], true)): ?>
+                                <form method="post" action="dashboard.php?section=<?php echo $archiveType; ?>" onsubmit="return confirm('Permanently delete this archived item? This cannot be undone.');">
+                                    <input type="hidden" name="<?php echo $archiveGroup['action']; ?>_action" value="delete_archived_<?php echo $archiveGroup['action']; ?>">
+                                    <input type="hidden" name="<?php echo $archiveGroup['action']; ?>_id" value="<?php echo (int)$archivedItem['id']; ?>">
+                                    <button type="submit" class="btn-small btn-delete"><i class="fas fa-trash"></i> Delete</button>
+                                </form>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; endif; ?>
                 </section>

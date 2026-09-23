@@ -134,6 +134,7 @@ $pageTitle = 'Guest Reviews - Villa Soledad Garden Resort';
         <button type="button" class="review-modal-close" onclick="closeReviewModal()" aria-label="Close">&times;</button>
         <h2 id="reviewModalTitle">Create Feedback</h2>
         <form action="<?php echo SITE_URL; ?>controllers/ReviewController.php?action=create" method="POST" id="reviewForm">
+            <input type="hidden" name="return_to" value="reviews">
             <input type="hidden" name="rating" id="reviewRatingInput" value="0">
             <div class="review-modal-rating">
                 <p>Select a rating: <span aria-hidden="true">*</span></p>
@@ -370,6 +371,17 @@ document.addEventListener('DOMContentLoaded', function() {
         form.action = editing
             ? '<?php echo SITE_URL; ?>controllers/ReviewController.php?action=update&id=' + encodeURIComponent(reviewId)
             : '<?php echo SITE_URL; ?>controllers/ReviewController.php?action=create';
+        // Ensure return_to field is set
+        let returnToInput = form.querySelector('input[name="return_to"]');
+        if (!returnToInput) {
+            returnToInput = document.createElement('input');
+            returnToInput.type = 'hidden';
+            returnToInput.name = 'return_to';
+            returnToInput.value = 'reviews';
+            form.appendChild(returnToInput);
+        } else {
+            returnToInput.value = 'reviews';
+        }
         document.getElementById('reviewModalTitle').textContent = editing ? 'Edit Feedback' : 'Create Feedback';
         document.querySelector('.review-submit-button').textContent = editing ? 'Save Feedback' : 'Submit Feedback';
         ratingInput.value = rating;
@@ -392,6 +404,94 @@ document.addEventListener('DOMContentLoaded', function() {
             openReviewModal('edit', this.dataset.reviewId, Number(this.dataset.rating), this.dataset.reviewText);
         });
     });
+
+    // Review success toast notification (similar to booking toast)
+    function createOrGetReviewToast() {
+        let toast = document.getElementById('reviewToast');
+        let toastMessage = document.getElementById('reviewToastMessage');
+
+        if (!toast || !toastMessage) {
+            toast = document.createElement('div');
+            toast.id = 'reviewToast';
+            toast.style.cssText = 'display:none;position:fixed;top:88px;right:20px;background:#ffffff;color:#000000;padding:1rem 1.25rem;border:2px solid #16a34a;border-radius:0.75rem;box-shadow:0 10px 25px rgba(0,0,0,0.2);z-index:10001;max-width:340px;animation:slideIn 0.3s ease;';
+            toastMessage = document.createElement('div');
+            toastMessage.id = 'reviewToastMessage';
+            toastMessage.style.cssText = 'font-size:0.95rem;line-height:1.35;';
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-check-circle';
+            icon.style.cssText = 'font-size:1.1rem;color:#16a34a;margin-right:0.75rem;';
+            const content = document.createElement('div');
+            content.style.cssText = 'display:flex;align-items:center;gap:0.75rem;';
+            content.appendChild(icon);
+            content.appendChild(toastMessage);
+            toast.appendChild(content);
+            document.body.appendChild(toast);
+        }
+
+        return { toast, toastMessage };
+    }
+
+    function showReviewToast(message) {
+        const { toast, toastMessage } = createOrGetReviewToast();
+        if (!toast || !toastMessage) {
+            console.error('Review toast could not be created.');
+            return;
+        }
+
+        toastMessage.textContent = message;
+        toast.style.display = 'flex';
+        toast.style.opacity = '1';
+        toast.style.visibility = 'visible';
+
+        if (window.reviewToastTimeout) {
+            clearTimeout(window.reviewToastTimeout);
+        }
+
+        window.reviewToastTimeout = setTimeout(() => {
+            hideReviewToast();
+        }, 4500);
+    }
+
+    function hideReviewToast() {
+        const toast = document.getElementById('reviewToast');
+        if (toast) {
+            toast.style.display = 'none';
+        }
+    }
+
+    // Check for review status on page load and show toast
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const reviewStatus = urlParams.get('review_status');
+        
+        if (reviewStatus === 'created') {
+            showReviewToast('Your Review is Successfully submitted');
+            // Clean up URL without reloading
+            const newUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, '', newUrl);
+        } else if (reviewStatus === 'updated') {
+            showReviewToast('Your Edited Review is Successfully submitted');
+            // Clean up URL without reloading
+            const newUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, '', newUrl);
+        }
+    });
+
+    // Add slide-in animation for review toast
+    const reviewToastStyle = document.createElement('style');
+    reviewToastStyle.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    `;
+    document.head.appendChild(reviewToastStyle);
 });
 </script>
 

@@ -125,33 +125,36 @@ foreach ($foods as $f) {
     
     .food-categories-nav {
         display: flex;
-        flex-wrap: wrap;
-        gap: 0;
-        justify-content: center;
-        margin-bottom: 4rem;
-        border-bottom: 2px solid #e5e7eb;
-        background: white;
-        padding: 0;
+        justify-content: flex-end;
+        margin: 0 auto 2.5rem;
+        background: transparent;
+        padding: 0 1rem;
         max-width: 1200px;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 0 2rem;
+    }
+
+    .food-category-select {
+        width: min(100%, 240px);
+        padding: 0.6rem 2.5rem 0.6rem 0.8rem;
+        border: 1px solid #cbddea;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #234663;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        appearance: auto;
+        box-shadow: 0 6px 18px rgba(24, 67, 98, 0.08);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .food-category-select:focus {
+        outline: none;
+        border-color: #2d8bd0;
+        box-shadow: 0 0 0 3px rgba(45, 139, 208, 0.14);
     }
 
     .food-category-link {
-        display: inline-block;
-        padding: 1rem 2rem;
-        background: transparent;
-        border: none;
-        border-bottom: 3px solid transparent;
-        text-decoration: none;
-        color: var(--dark-gray);
-        transition: all 0.3s ease;
-        font-size: 1rem;
-        font-weight: 500;
-        text-align: center;
-        cursor: pointer;
-        position: relative;
+        display: none;
     }
 
     .food-category-link:hover {
@@ -165,6 +168,11 @@ foreach ($foods as $f) {
         border-bottom-color: var(--accent-orange);
         background: rgba(255, 122, 61, 0.1);
         font-weight: 600;
+    }
+
+    .food-category-select option {
+        color: #234663;
+        font-size: 1rem;
     }
 
     .food-items-section {
@@ -299,23 +307,6 @@ foreach ($foods as $f) {
             font-size: 2rem;
         }
 
-        .food-categories-nav {
-            gap: 1rem;
-        }
-
-        .food-category-link {
-            padding: 1rem 1.5rem;
-            min-width: 100px;
-        }
-
-        .food-category-link i {
-            font-size: 2rem;
-        }
-
-        .food-category-link span {
-            font-size: 0.8rem;
-        }
-
         .food-grid {
             grid-template-columns: 1fr;
             gap: 1rem;
@@ -325,11 +316,13 @@ foreach ($foods as $f) {
 
 <!-- Categories Navigation -->
 <div class="food-categories-nav" id="categoriesNav">
-<?php foreach ($categories as $i => $cat):
-    $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($cat));
-    $active = $i === 0 ? ' active' : '';
-    echo '<a href="#" class="food-category-link' . $active . '" onclick="showCategory(\'' . $slug . '\', this); return false;">' . htmlspecialchars($cat) . '</a>'; 
-endforeach; ?>
+    <select class="food-category-select" id="foodCategorySelect" aria-label="Choose a food category">
+        <?php foreach ($categories as $i => $cat):
+            $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($cat));
+        ?>
+            <option value="<?php echo htmlspecialchars($slug); ?>"><?php echo htmlspecialchars($cat); ?></option>
+        <?php endforeach; ?>
+    </select>
 </div>
 
 <!-- Food Items Sections -->
@@ -378,17 +371,24 @@ function showCategory(categoryId, el) {
     const selectedSection = document.getElementById(categoryId);
     if (selectedSection) selectedSection.classList.add('active');
 
-    const allLinks = document.querySelectorAll('.food-category-link');
-    allLinks.forEach(link => link.classList.remove('active'));
-    if (el && el.classList) el.classList.add('active');
+    const categorySelect = document.getElementById('foodCategorySelect');
+    if (categorySelect && categorySelect.value !== categoryId) {
+        categorySelect.value = categoryId;
+    }
 }
 
 // Show first category by default
 document.addEventListener('DOMContentLoaded', function() {
     const firstSection = document.querySelector('.food-items-section');
+    const categorySelect = document.getElementById('foodCategorySelect');
     if (firstSection) {
         activeCategoryId = firstSection.id;
         firstSection.classList.add('active');
+    }
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            showCategory(this.value);
+        });
     }
 });
 </script>

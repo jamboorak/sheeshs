@@ -84,22 +84,23 @@ function sendOTPEmail($toEmail, $otpCode, $userName) {
             <meta name='viewport' content='width=device-width, initial-scale=1.0'>
             <title>OTP Verification</title>
         </head>
-        <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
+        <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #234663; background: #eaf2f9;'>
             <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
-                <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;'>
+                <div style='background: #234663; padding: 30px; border-radius: 10px 10px 0 0; text-align: center;'>
+                    <p style='color: #b9d9ed; margin: 0 0 8px; font-size: 13px; letter-spacing: 1px;'>VILLA SOLEDAD GARDEN RESORT</p>
                     <h1 style='color: white; margin: 0; font-size: 28px;'>OTP Verification</h1>
                 </div>
-                <div style='background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px;'>
+                <div style='background: #ffffff; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #dbe7f0; border-top: none;'>
                     <p style='font-size: 16px; margin-bottom: 20px;'>Dear <strong>{$userName}</strong>,</p>
                     <p style='font-size: 16px; margin-bottom: 20px;'>Thank you for choosing <strong>" . SITE_NAME . "</strong>. Your One-Time Password (OTP) for account verification is:</p>
-                    <div style='background: white; border: 2px solid #667eea; border-radius: 10px; padding: 20px; text-align: center; margin: 20px 0;'>
-                        <span style='font-size: 36px; font-weight: bold; color: #667eea; letter-spacing: 5px;'>{$otpCode}</span>
+                    <div style='background: #eaf2f9; border: 2px solid #2d8bd0; border-radius: 10px; padding: 20px; text-align: center; margin: 20px 0;'>
+                        <span style='font-size: 36px; font-weight: bold; color: #234663; letter-spacing: 5px;'>{$otpCode}</span>
                     </div>
-                    <p style='font-size: 14px; color: #666; margin-bottom: 10px;'>This OTP will expire in <strong>3 minutes</strong>.</p>
-                    <p style='font-size: 14px; color: #666; margin-bottom: 20px;'>If you did not request this verification, please ignore this email.</p>
-                    <hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>
-                    <p style='font-size: 12px; color: #999; text-align: center;'>This is an automated email. Please do not reply.</p>
-                    <p style='font-size: 12px; color: #999; text-align: center; margin-top: 10px;'>&copy; " . date('Y') . " " . SITE_NAME . ". All rights reserved.</p>
+                    <p style='font-size: 14px; color: #60788c; margin-bottom: 10px;'>This OTP will expire in <strong style='color: #234663;'>3 minutes</strong>.</p>
+                    <p style='font-size: 14px; color: #60788c; margin-bottom: 20px;'>If you did not request this verification, please ignore this email.</p>
+                    <hr style='border: none; border-top: 1px solid #dbe7f0; margin: 20px 0;'>
+                    <p style='font-size: 12px; color: #71879a; text-align: center;'>This is an automated email. Please do not reply.</p>
+                    <p style='font-size: 12px; color: #71879a; text-align: center; margin-top: 10px;'>&copy; " . date('Y') . " " . SITE_NAME . ". All rights reserved.</p>
                 </div>
             </div>
         </body>
@@ -141,8 +142,8 @@ function sendOTPEmail($toEmail, $otpCode, $userName) {
         }
 
         .container {
-            width: 900px;
-            height: 450px;
+            width: min(100%, 520px);
+            height: auto;
             display: flex;
             border-radius: 20px;
             overflow: hidden;
@@ -188,7 +189,7 @@ function sendOTPEmail($toEmail, $otpCode, $userName) {
         }
 
         .right {
-            width: 50%;
+            width: 100%;
             padding: 40px;
             background: #ffffff;
             display: flex;
@@ -435,14 +436,6 @@ function sendOTPEmail($toEmail, $otpCode, $userName) {
 </head>
 <body>
     <div class="container">
-        <div class="left">
-            <div class="overlay"></div>
-            <div class="left-content">
-                <h1>Villa Soledad</h1>
-                <h2>Garden Resort</h2>
-                <p>OTP Verification</p>
-            </div>
-        </div>
         <div class="right">
             <h2>Verify OTP</h2>
             <p class="email-text">

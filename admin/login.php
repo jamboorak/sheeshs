@@ -26,7 +26,7 @@ if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true
         }
 
         body {
-            background: linear-gradient(rgba(10, 35, 58, 0.72), rgba(10, 35, 58, 0.72)), url('../images/villasoledadbg.png') center / cover fixed;
+            background: linear-gradient(rgba(9, 35, 58, 0.72), rgba(9, 35, 58, 0.72)), url('../images/villasoledadbg.png') center / cover fixed;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             align-items: center;
@@ -37,15 +37,17 @@ if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true
 
         .admin-login-wrapper {
             width: 100%;
-            max-width: 400px;
-            background: white;
-            border-radius: 15px;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 24px 70px rgba(9, 35, 58, 0.24);
+            backdrop-filter: blur(8px);
         }
 
         .admin-login-header {
-            background: linear-gradient(135deg, var(--accent-orange) 0%, var(--light-orange) 100%);
+            background: linear-gradient(135deg, rgba(15, 76, 129, 0.96) 0%, rgba(32, 117, 175, 0.96) 100%);
             color: white;
             padding: 2rem 2rem 1.5rem;
             text-align: center;
@@ -80,19 +82,20 @@ if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true
 
         .form-group input {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            border: 1px solid #d4e0ea;
+            border-radius: 12px;
             font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #f9fafb;
+            transition: all 0.25s ease;
+            background: #f8fbff;
+            color: #173b5d;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: var(--accent-orange);
+            border-color: rgba(32, 117, 175, 0.8);
             background: white;
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+            box-shadow: 0 0 0 3px rgba(32, 117, 175, 0.12);
         }
 
         .password-input-wrapper {
@@ -127,21 +130,22 @@ if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true
 
         .login-btn {
             width: 100%;
-            padding: 0.875rem 1.5rem;
-            background: linear-gradient(135deg, var(--accent-orange) 0%, var(--light-orange) 100%);
+            padding: 0.9rem 1.5rem;
+            background: linear-gradient(135deg, #ff7a3d 0%, #ff9a4d 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             margin-bottom: 1rem;
+            box-shadow: 0 10px 22px rgba(255, 122, 61, 0.25);
         }
 
         .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.25);
+            box-shadow: 0 12px 28px rgba(255, 122, 61, 0.32);
         }
 
         .login-btn:active {
@@ -154,14 +158,14 @@ if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true
         }
 
         .back-link a {
-            color: #6b7280;
+            color: #4a6279;
             text-decoration: none;
             font-size: 0.9rem;
             transition: color 0.3s ease;
         }
 
         .back-link a:hover {
-            color: var(--accent-orange);
+            color: #ff7a3d;
         }
 
         .error-message {

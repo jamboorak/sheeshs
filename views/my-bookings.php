@@ -190,9 +190,10 @@ foreach ($reservations as $reservation) {
         }
 
         .reservation-details {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
             overflow: hidden;
             margin-bottom: 2rem;
         }
@@ -206,34 +207,49 @@ foreach ($reservations as $reservation) {
         }
 
         .reservation-header {
-            background: #4169E1;
-            color: white;
-            padding: 2rem;
-            text-align: center;
+            background: #ffffff;
+            color: #1f2937;
+            padding: 2rem 2rem 1.5rem;
+            text-align: left;
+            border-bottom: 3px solid #f97316;
         }
 
         .reservation-header h1 {
-            margin: 0;
-            font-size: 2.5rem;
-            font-weight: 300;
+            margin: 0 0 1rem;
+            color: #1e3a8a;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .reservation-status {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 1rem;
+            text-align: center;
         }
 
         .reservation-info {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 0.75rem 1.5rem;
+            margin-top: 1.25rem;
         }
 
         .info-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            min-height: 32px;
+            color: #374151;
+            font-size: 0.95rem;
         }
 
         .info-item i {
             width: 20px;
             text-align: center;
+            color: #f97316;
         }
 
         .reservation-content {
@@ -242,10 +258,10 @@ foreach ($reservations as $reservation) {
 
         .section-title {
             font-size: 1.5rem;
-            color: #333;
+            color: #1e3a8a;
             margin-bottom: 1.5rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid #4169E1;
+            border-bottom: 2px solid #f97316;
         }
 
         .chosen-items {
@@ -327,6 +343,7 @@ foreach ($reservations as $reservation) {
         }
 
         .status-badge {
+            display: inline-block;
             padding: 0.5rem 1rem;
             border-radius: 20px;
             font-size: 0.9rem;
@@ -389,9 +406,9 @@ foreach ($reservations as $reservation) {
         }
 
         .total-section {
-            background: #4169E1;
+            background: #1e3a8a;
             color: white;
-            border-radius: 20px;
+            border-radius: 14px;
             padding: 1.25rem 1.5rem;
             text-align: center;
             min-height: 120px;

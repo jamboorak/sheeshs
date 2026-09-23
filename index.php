@@ -1,4 +1,5 @@
 <?php
+$pageClass = 'home-page';
 require_once 'includes/header.php';
 require_once __DIR__ . '/config/RoomConfig.php';
 
@@ -50,57 +51,168 @@ foreach ($publicPools as $publicPool) {
 
     <!-- Welcome + Contact Section -->
     <section id="welcome" class="section welcome-contact" style="background: linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.78)), url('images/villasoledadbg.png') center/cover no-repeat; padding: 5rem 0;">
-        <div class="container">
-            <div class="section-intro" style="text-align: center; max-width: 800px; margin: 0 auto 3rem; color: #ffffff;">
-                <h2 style="color: #ffffff;">Welcome to Villa Soledad Resort</h2>
-                <p style="color: #f8fafc;">Your perfect destination for relaxation and unforgettable memories. Whether you're planning a family vacation, a romantic getaway, or a group celebration, our resort offers the ideal setting for your special moments.</p>
-                <p style="color: #f8fafc;">Enjoy our world-class amenities, comfortable accommodations, and exceptional service that will make your stay truly memorable.</p>
+        <div class="home-reference-hero">
+            <div class="home-reference-hero-copy">
+                <span class="home-reference-eyebrow">YOUR PERFECT GETAWAY AWAITS</span>
+                <h1>Villa Soledad Resort</h1>
+                <p>Experience comfort, nature, and relaxation at our beautiful resort. Book your stay today and create unforgettable memories.</p>
             </div>
-            <div style="text-align: center; margin-bottom: 1.5rem; color: #ffffff;">
-                <h2 style="color: #ffffff;">Get in Touch</h2>
-                <p style="color: #e2e8f0; max-width: 560px; margin: 1rem auto 0;">Ready to book your stay? Contact us today!</p>
+            <div class="home-reference-map-card" id="homeReferenceMapCard">
+                <div class="home-reference-map-heading" id="homeReferenceMapDragHandle"><i class="fas fa-map-marker-alt"></i><strong>Location</strong><button type="button" aria-label="Close location preview">&times;</button></div>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3870.6601965650625!2d121.3124313108307!3d14.038145390542423!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd4301035b4ef3%3A0xd22111becbb8a4!2sVilla%20Soledad%20Garden%20Resort!5e0!3m2!1sen!2sph!4v1777265586353!5m2!1sen!2sph" title="Villa Soledad Garden Resort location map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <div class="home-reference-map-footer"><button type="button" class="home-reference-address" id="homeReferenceAddress"><i class="fas fa-map-marker-alt"></i> San Pablo, Laguna</button><a href="https://maps.google.com/?q=Villa+Soledad+Garden+Resort" target="_blank" rel="noopener noreferrer">Open in Google Maps <i class="fas fa-external-link-alt"></i></a></div>
             </div>
-            <div class="contact-cards" style="display: grid; grid-template-columns: repeat(3, minmax(300px, 360px)); gap: 2.5rem; width: min(100%, 1200px); justify-content: center; justify-items: center; align-items: start; margin: 0 auto;">
-                <!-- Contact card -->
-                <div class="contact-card" style="background: transparent; border-radius: 14px; box-shadow: none; padding: 1.6rem 1.25rem; min-height: 260px; max-width: 360px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.75rem;">
-                    <div style="width: 48px; height: 48px; display: grid; place-items: center; background: rgba(249, 115, 22, 0.3); border-radius: 12px;">
-                        <i class="fas fa-phone" style="font-size: 1.25rem; color: var(--accent-orange);"></i>
-                    </div>
-                    <h3 style="margin: 0; font-size: 1.05rem; color: #ffffff; font-weight: 700;">Contact Us</h3>
-                    <div style="width: 100%; display: flex; flex-direction: column; gap: 0.35rem; align-items: center;">
-                        <p style="margin: 0; color: #e2e8f0; line-height: 1.6;"><strong style="color: #ffffff;">Phone No.:</strong> 09690204045</p>
-                        <p style="margin: 0; color: #e2e8f0; line-height: 1.6;"><strong style="color: #ffffff;">Email:</strong> Villasoledadgardernresort@gmail.com</p>
-                        <p style="margin: 0; color: #e2e8f0; line-height: 1.6;"><strong style="color: #ffffff;">Facebook:</strong> Villa Soledad Garden Resort</p>
+        </div>
+
+        <div class="home-address-modal" id="homeAddressModal" hidden>
+            <div class="home-address-dialog home-navigation-dialog" role="dialog" aria-modal="true" aria-labelledby="homeAddressTitle">
+                <button type="button" class="home-address-close" id="homeAddressClose" aria-label="Close address">&times;</button>
+                <div class="home-navigation-heading"><i class="fas fa-map-marker-alt"></i><strong>Navigation Map</strong></div>
+                <div class="home-navigation-body">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3870.6601965650625!2d121.3124313108307!3d14.038145390542423!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd4301035b4ef3%3A0xd22111becbb8a4!2sVilla%20Soledad%20Garden%20Resort!5e0!3m2!1sen!2sph!4v1777265586353!5m2!1sen!2sph" title="Navigation map to Villa Soledad Garden Resort" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <div class="home-navigation-details">
+                        <div class="home-navigation-route"><i class="fas fa-car"></i><strong>Villa Soledad Garden Resort</strong><span>San Pablo, Laguna</span></div>
+                        <div class="home-navigation-step"><i class="fas fa-location-dot"></i><div><strong>Your Location</strong><small>Start</small></div></div>
+                        <div class="home-navigation-step"><i class="fas fa-arrow-up"></i><div><strong>Head northeast on AH26</strong><small>Follow the main road toward San Pablo City</small></div></div>
+                        <div class="home-navigation-step"><i class="fas fa-turn-up"></i><div><strong>Turn toward Villa Soledad Road</strong><small>Continue to the resort entrance</small></div></div>
+                        <div class="home-navigation-step"><i class="fas fa-location-dot"></i><div><strong>Arrive at Villa Soledad Resort</strong><small>201 Soledad-Santa Maria-Santisimo Road</small></div></div>
+                        <a href="https://maps.google.com/?q=Villa+Soledad+Garden+Resort" target="_blank" rel="noopener noreferrer" class="home-address-link"><i class="fas fa-location-arrow"></i> Open in Google Maps</a>
                     </div>
                 </div>
-                <div class="contact-card" style="background: transparent; border-radius: 14px; box-shadow: none; padding: 1.6rem 1.25rem; min-height: 260px; max-width: 360px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.75rem;">
-                    <div style="width: 48px; height: 48px; display: grid; place-items: center; background: rgba(249, 115, 22, 0.3); border-radius: 12px;">
-                        <i class="fas fa-clock" style="font-size: 1.25rem; color: var(--accent-orange);"></i>
-                    </div>
-                    <h3 style="margin: 0; font-size: 1.05rem; color: #ffffff; font-weight: 700;">Tour Hours</h3>
-                    <div style="width: 100%; display: flex; flex-direction: column; gap: 0.35rem; align-items: center;">
-                        <p style="margin: 0; color: #e2e8f0; line-height: 1.6;"><strong style="color: #ffffff;">Day Tour Hours</strong> 8:00 AM - 5:00 PM</p>
-                        <p style="margin: 0; color: #e2e8f0; line-height: 1.6;"><strong style="color: #ffffff;">Night Tour Hours</strong> 8:00 PM - 5:00 AM</p>
-                    </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const mapCard = document.getElementById('homeReferenceMapCard');
+                const dragHandle = document.getElementById('homeReferenceMapDragHandle');
+                const addressButton = document.getElementById('homeReferenceAddress');
+                const addressModal = document.getElementById('homeAddressModal');
+                const addressClose = document.getElementById('homeAddressClose');
+
+                if (mapCard && dragHandle) {
+                    let dragging = false;
+                    let startX = 0;
+                    let startY = 0;
+                    let startLeft = 0;
+                    let startTop = 0;
+
+                    dragHandle.addEventListener('pointerdown', function(event) {
+                        if (event.target.closest('button')) return;
+                        const hero = mapCard.closest('.home-reference-hero');
+                        const heroRect = hero.getBoundingClientRect();
+                        const cardRect = mapCard.getBoundingClientRect();
+                        mapCard.style.left = `${cardRect.left - heroRect.left}px`;
+                        mapCard.style.right = 'auto';
+                        mapCard.style.bottom = 'auto';
+                        mapCard.style.top = `${cardRect.top - heroRect.top}px`;
+                        startX = event.clientX;
+                        startY = event.clientY;
+                        startLeft = cardRect.left - heroRect.left;
+                        startTop = cardRect.top - heroRect.top;
+                        dragging = true;
+                        dragHandle.setPointerCapture(event.pointerId);
+                        mapCard.classList.add('is-dragging');
+                    });
+
+                    dragHandle.addEventListener('pointermove', function(event) {
+                        if (!dragging) return;
+                        const hero = mapCard.closest('.home-reference-hero');
+                        const maxLeft = hero.clientWidth - mapCard.offsetWidth;
+                        const maxTop = hero.clientHeight - mapCard.offsetHeight;
+                        const nextLeft = Math.max(0, Math.min(maxLeft, startLeft + event.clientX - startX));
+                        const nextTop = Math.max(0, Math.min(maxTop, startTop + event.clientY - startY));
+                        mapCard.style.left = `${nextLeft}px`;
+                        mapCard.style.top = `${nextTop}px`;
+                    });
+
+                    dragHandle.addEventListener('pointerup', function() {
+                        dragging = false;
+                        mapCard.classList.remove('is-dragging');
+                    });
+                }
+
+                function toggleAddressModal(show) {
+                    if (!addressModal) return;
+                    addressModal.hidden = !show;
+                    document.body.classList.toggle('home-address-open', show);
+                }
+
+                addressButton?.addEventListener('click', () => toggleAddressModal(true));
+                addressClose?.addEventListener('click', () => toggleAddressModal(false));
+                addressModal?.addEventListener('click', function(event) {
+                    if (event.target === addressModal) toggleAddressModal(false);
+                });
+            });
+        </script>
+
+        <div class="home-reference-features">
+            <div class="home-reference-feature"><i class="fas fa-bed"></i><h3>Comfortable Rooms</h3><p>Spacious and well-equipped for your relaxation.</p></div>
+            <div class="home-reference-feature"><i class="fas fa-water"></i><h3>Resort Amenities</h3><p>Pool, restaurant, and more for your enjoyment.</p></div>
+            <div class="home-reference-feature"><i class="fas fa-shield-alt"></i><h3>Safe &amp; Secure</h3><p>Your safety is our priority.</p></div>
+            <div class="home-reference-feature"><i class="fas fa-leaf"></i><h3>Nature Escape</h3><p>Enjoy the beauty of Laguna.</p></div>
+        </div>
+
+        <div class="home-reference-resorts home-reference-facade">
+            <div class="home-reference-section-heading"><h2>Facade</h2><p>Take a closer look at Villa Soledad Garden Resort.</p></div>
+            <div class="home-facade-slideshow" id="homeFacadeSlideshow" aria-label="Villa Soledad facade slideshow">
+                <div class="home-facade-track">
+                    <?php for ($slideNumber = 1; $slideNumber <= 9; $slideNumber++): ?>
+                        <div class="home-facade-slide">
+                            <img src="images/slideimg<?php echo $slideNumber; ?>.jpg" alt="Villa Soledad Garden Resort facade <?php echo $slideNumber; ?>">
+                        </div>
+                    <?php endfor; ?>
                 </div>
-                <div class="contact-card" style="background: transparent; border-radius: 14px; box-shadow: none; padding: 1.6rem 1.25rem; min-height: 260px; max-width: 360px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.75rem;">
-                    <div style="width: 48px; height: 48px; display: grid; place-items: center; background: rgba(249, 115, 22, 0.3); border-radius: 12px;">
-                        <i class="fas fa-peso-sign" style="font-size: 1.25rem; color: var(--accent-orange);"></i>
-                    </div>
-                    <h3 style="margin: 0; font-size: 1.05rem; color: #ffffff; font-weight: 700;">Entrance Fees</h3>
-                    <div style="width: 100%; display: flex; flex-direction: column; gap: 0.35rem; align-items: center;">
-                        <p style="margin: 0; color: #e2e8f0; line-height: 1.6;"><strong style="color: #ffffff;">Day Rate:</strong> ₱150/Adult, ₱80/Child</p>
-                        <p style="margin: 0; color: #e2e8f0; line-height: 1.6;"><strong style="color: #ffffff;">Night Rate:</strong> ₱180/Adult, ₱100/Child</p>
-                    </div>
+                <div class="home-facade-dots" role="tablist" aria-label="Facade slideshow controls">
+                    <?php for ($slideNumber = 1; $slideNumber <= 7; $slideNumber++): ?>
+                        <button type="button" class="home-facade-dot<?php echo $slideNumber === 1 ? ' is-active' : ''; ?>" data-slide="<?php echo $slideNumber - 1; ?>" aria-label="Show facade image <?php echo $slideNumber; ?>"></button>
+                    <?php endfor; ?>
                 </div>
             </div>
         </div>
     </section>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slideshow = document.getElementById('homeFacadeSlideshow');
+            if (!slideshow) return;
+
+            const slides = Array.from(slideshow.querySelectorAll('.home-facade-slide'));
+            const dots = Array.from(slideshow.querySelectorAll('.home-facade-dot'));
+            let activeSlide = 0;
+            let slideshowTimer;
+
+            function showFacadeSlide(index) {
+                const lastPosition = Math.max(0, slides.length - 3);
+                activeSlide = (index + lastPosition + 1) % (lastPosition + 1);
+                slideshow.querySelector('.home-facade-track').style.transform = `translateX(-${activeSlide * 11.111}%)`;
+                dots.forEach((dot, dotIndex) => {
+                    dot.classList.toggle('is-active', dotIndex === activeSlide);
+                });
+            }
+
+            function restartFacadeTimer() {
+                window.clearInterval(slideshowTimer);
+                slideshowTimer = window.setInterval(() => showFacadeSlide(activeSlide + 1), 4000);
+            }
+
+            dots.forEach((dot) => {
+                dot.addEventListener('click', function() {
+                    showFacadeSlide(Number(this.dataset.slide));
+                    restartFacadeTimer();
+                });
+            });
+
+            slideshow.addEventListener('mouseenter', () => window.clearInterval(slideshowTimer));
+            slideshow.addEventListener('mouseleave', restartFacadeTimer);
+            restartFacadeTimer();
+        });
+    </script>
+
     <!-- Rooms Section -->
-    <section id="rooms" class="facilities" style="background: linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.78)), url('images/villasoledadbg.png') center/cover no-repeat; padding: 3rem 0 2rem;">
+    <section id="rooms" class="facilities home-section-with-bg" style="background: linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.78)), url('images/villasoledadbg.png') center/cover no-repeat; padding: 3rem 0 2rem;">
         <div class="container">
-            <h2 style="text-align: center; color: var(--accent-orange); margin-bottom: 2rem; font-size: 2.2rem; font-weight: 700;">Rooms we offer</h2>
+            <h2 class="home-section-heading" style="color: #ffffff !important;">Rooms we offer</h2>
             <div class="room-slider-wrapper" style="perspective: 1400px;">
                 <div class="room-slider" id="roomSlider" style="display: flex; align-items: center; justify-content: center; gap: 3rem; position: relative;">
                     <button onclick="rotateRooms(-1)" style="background: none; border: none; font-size: 2rem; color: var(--primary-blue); cursor: pointer; padding: 0; width: 50px; height: 50px; margin-right: 2.5rem; border-radius: 50%; background: var(--bg-light); transition: all 0.3s ease;" onmouseover="this.style.background='var(--accent-orange)'; this.style.color='white';" onmouseout="this.style.background='var(--bg-light)'; this.style.color='var(--primary-blue)';">
@@ -158,9 +270,9 @@ foreach ($publicPools as $publicPool) {
     </div>
 
     <!-- Cottages Section -->
-    <section id="cottages" style="background: linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.78)), url('images/villasoledadbg.png') center/cover no-repeat; padding: 3rem 0 2rem;">
+    <section id="cottages" class="home-section-with-bg" style="background: linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.78)), url('images/villasoledadbg.png') center/cover no-repeat; padding: 3rem 0 2rem;">
         <div class="container">
-            <h2 style="text-align: center; color: var(--accent-orange); margin-bottom: 2rem; font-size: 2.2rem; font-weight: 700;">Cottages we offer</h2>
+            <h2 class="home-section-heading" style="color: #ffffff !important;">Cottages we offer</h2>
             <div class="cottage-slider-wrapper" style="perspective: 1400px;">
                 <div class="cottage-slider" id="cottageSlider" style="display: flex; align-items: center; justify-content: center; gap: 3rem; position: relative;">
                     <button onclick="rotateCottages(-1)" style="background: none; border: none; font-size: 2rem; color: var(--primary-blue); cursor: pointer; padding: 0; width: 50px; height: 50px; margin-right: 2.5rem; border-radius: 50%; background: var(--bg-light); transition: all 0.3s ease;" onmouseover="this.style.background='var(--accent-orange)'; this.style.color='white';" onmouseout="this.style.background='var(--bg-light)'; this.style.color='var(--primary-blue)';">
@@ -207,9 +319,9 @@ foreach ($publicPools as $publicPool) {
     </div>
 
     <!-- Pools Section -->
-    <section id="pools" style="background: linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.78)), url('images/villasoledadbg.png') center/cover no-repeat; padding: 3rem 0 2rem; display: none;">
+    <section id="pools" class="home-section-with-bg" style="background: linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.78)), url('images/villasoledadbg.png') center/cover no-repeat; padding: 3rem 0 2rem; display: none;">
         <div class="container">
-            <h2 style="text-align: center; color: var(--accent-orange); margin-bottom: 2rem; font-size: 2.2rem; font-weight: 700;">Pools we offer</h2>
+            <h2 class="home-section-heading" style="color: #ffffff !important;">Pools we offer</h2>
             <div class="pool-slider-wrapper" style="perspective: 1400px;">
                 <div class="pool-slider" id="poolSlider" style="display: flex; align-items: center; justify-content: center; gap: 3rem; position: relative;">
                     <button onclick="rotatePools(-1)" style="background: none; border: none; font-size: 2rem; color: var(--primary-blue); cursor: pointer; padding: 0; width: 50px; height: 50px; margin-right: 2.5rem; border-radius: 50%; background: var(--bg-light); transition: all 0.3s ease;" onmouseover="this.style.background='var(--accent-orange)'; this.style.color='white';" onmouseout="this.style.background='var(--bg-light)'; this.style.color='var(--primary-blue)';">
@@ -458,7 +570,7 @@ foreach ($publicPools as $publicPool) {
         }
 
         function updatePageSections() {
-            const homeSections = ['home', 'welcome', 'contact', 'location', 'reviews'];
+            const homeSections = ['home', 'welcome', 'contact', 'reviews'];
             const sectionIds = [...homeSections, 'rooms', 'cottages', 'pools'];
             const target = window.location.hash.replace('#', '') || 'home';
 
@@ -474,33 +586,6 @@ foreach ($publicPools as $publicPool) {
         window.addEventListener('hashchange', updatePageSections);
     </script>
 
-    <!-- Location and Facade Section -->
-    <section id="location" class="location" style="background: linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.78)), url('images/villasoledadbg.png') center/cover no-repeat;">
-        <div class="container">
-            <div class="location-facade-layout">
-                <div class="location-facade-header">
-                    <h2>LOCATION &amp; FACADE</h2>
-                </div>
-                <div class="location-facade-content">
-                    <h3 class="location-heading">IT'S LOCATED AT</h3>
-                    <div class="map-container">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3870.6601965650625!2d121.3124313108307!3d14.038145390542423!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd4301035b4ef3%3A0xd22111becbb8a4!2sVilla%20Soledad%20Garden%20Resort!5e0!3m2!1sen!2sph!4v1777265586353!5m2!1sen!2sph" title="Villa Soledad Garden Resort location map" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                    </div>
-                    <h3 class="facade-heading">FACADE</h3>
-                    <div class="facade-grid">
-                        <figure class="facade-card">
-                            <img class="facade-image" src="image1.png" alt="Villa Soledad Garden Resort facade">
-                        </figure>
-                        <figure class="facade-card">
-                            <img class="facade-image" src="image2.png" alt="Villa Soledad Garden Resort grounds">
-                        </figure>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    
     <!-- Reviews Section -->
     <section id="reviews" class="section reviews">
         <div class="container">
@@ -514,6 +599,7 @@ foreach ($publicPools as $publicPool) {
                 <?php if (isset($user) && $user->isLoggedIn()): ?>
                     <form action="<?php echo SITE_URL; ?>controllers/ReviewController.php?action=create" method="POST" id="reviewForm">
                         <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">Write a Review</h3>
+                        <input type="hidden" name="return_to" value="index">
                         <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 0.75rem;">Select a rating: <span style="color: red;">*</span></p>
                         <div class="star-rating" style="margin-bottom: 1rem;">
                             <?php for ($i = 1; $i <= 5; $i++): ?>
@@ -545,7 +631,12 @@ foreach ($publicPools as $publicPool) {
                                 <span class="review-rating" style="color: var(--accent-orange); margin-left: 0.5rem;"><?php echo $review['stars_html'] ?? ''; ?></span>
                             </div>
                             <p style="margin: 0.75rem 0; color: #374151; line-height: 1.6;"><?php echo htmlspecialchars($review['review_text']); ?></p>
-                            <div class="review-date" style="font-size: 0.85rem; color: #6b7280;"><?php echo htmlspecialchars($review['created_date'] ?? ''); ?></div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                                <div class="review-date" style="font-size: 0.85rem; color: #6b7280;"><?php echo htmlspecialchars($review['created_date'] ?? ''); ?></div>
+                                <?php if (isset($_SESSION['user_id']) && $review['user_id'] == $_SESSION['user_id']): ?>
+                                    <button type="button" class="home-review-edit" data-review-id="<?php echo (int)$review['id']; ?>" data-rating="<?php echo (int)$review['rating']; ?>" data-review-text="<?php echo htmlspecialchars($review['review_text'], ENT_QUOTES, 'UTF-8'); ?>" style="border: 0; background: transparent; color: var(--primary-blue); cursor: pointer; font-weight: 600;">Edit</button>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -562,6 +653,8 @@ foreach ($publicPools as $publicPool) {
             const reviewText = document.getElementById('reviewText');
             const wordCount = document.getElementById('wordCount');
             const reviewForm = document.getElementById('reviewForm');
+            const reviewHeading = reviewForm?.querySelector('h3');
+            const submitButton = reviewForm?.querySelector('button[type="submit"]');
 
             function countWords(value) {
                 return value.trim().split(/\s+/).filter(word => word.length > 0).length;
@@ -597,6 +690,20 @@ foreach ($publicPools as $publicPool) {
                     }
                 });
             }
+
+            document.querySelectorAll('.home-review-edit').forEach(button => {
+                button.addEventListener('click', function() {
+                    reviewForm.action = '<?php echo SITE_URL; ?>controllers/ReviewController.php?action=update&id=' + encodeURIComponent(this.dataset.reviewId);
+                    reviewHeading.textContent = 'Edit Your Review';
+                    submitButton.textContent = 'Save Review';
+                    reviewText.value = this.dataset.reviewText;
+                    ratingInput.value = this.dataset.rating;
+                    stars.forEach(s => s.style.color = Number(s.dataset.rating) <= Number(this.dataset.rating) ? '#ff7a3d' : '#d1d5db');
+                    reviewText.dispatchEvent(new Event('input'));
+                    reviewForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    reviewText.focus();
+                });
+            });
 
             // Handle star rating clicks
             const stars = document.querySelectorAll('.star-rating i');
@@ -643,6 +750,94 @@ foreach ($publicPools as $publicPool) {
                 }
             }
         })();
+
+        // Review success toast notification (similar to booking toast)
+        function createOrGetReviewToast() {
+            let toast = document.getElementById('reviewToast');
+            let toastMessage = document.getElementById('reviewToastMessage');
+
+            if (!toast || !toastMessage) {
+                toast = document.createElement('div');
+                toast.id = 'reviewToast';
+                toast.style.cssText = 'display:none;position:fixed;top:88px;right:20px;background:#ffffff;color:#000000;padding:1rem 1.25rem;border:2px solid #16a34a;border-radius:0.75rem;box-shadow:0 10px 25px rgba(0,0,0,0.2);z-index:10001;max-width:340px;animation:slideIn 0.3s ease;';
+                toastMessage = document.createElement('div');
+                toastMessage.id = 'reviewToastMessage';
+                toastMessage.style.cssText = 'font-size:0.95rem;line-height:1.35;';
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-check-circle';
+                icon.style.cssText = 'font-size:1.1rem;color:#16a34a;margin-right:0.75rem;';
+                const content = document.createElement('div');
+                content.style.cssText = 'display:flex;align-items:center;gap:0.75rem;';
+                content.appendChild(icon);
+                content.appendChild(toastMessage);
+                toast.appendChild(content);
+                document.body.appendChild(toast);
+            }
+
+            return { toast, toastMessage };
+        }
+
+        function showReviewToast(message) {
+            const { toast, toastMessage } = createOrGetReviewToast();
+            if (!toast || !toastMessage) {
+                console.error('Review toast could not be created.');
+                return;
+            }
+
+            toastMessage.textContent = message;
+            toast.style.display = 'flex';
+            toast.style.opacity = '1';
+            toast.style.visibility = 'visible';
+
+            if (window.reviewToastTimeout) {
+                clearTimeout(window.reviewToastTimeout);
+            }
+
+            window.reviewToastTimeout = setTimeout(() => {
+                hideReviewToast();
+            }, 4500);
+        }
+
+        function hideReviewToast() {
+            const toast = document.getElementById('reviewToast');
+            if (toast) {
+                toast.style.display = 'none';
+            }
+        }
+
+        // Check for review status on page load and show toast
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const reviewStatus = urlParams.get('review_status');
+            
+            if (reviewStatus === 'created') {
+                showReviewToast('Your Review is Successfully submitted');
+                // Clean up URL without reloading
+                const newUrl = window.location.pathname + window.location.hash;
+                window.history.replaceState({}, '', newUrl);
+            } else if (reviewStatus === 'updated') {
+                showReviewToast('Your Edited Review is Successfully submitted');
+                // Clean up URL without reloading
+                const newUrl = window.location.pathname + window.location.hash;
+                window.history.replaceState({}, '', newUrl);
+            }
+        });
+
+        // Add slide-in animation for review toast
+        const reviewToastStyle = document.createElement('style');
+        reviewToastStyle.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(reviewToastStyle);
     </script>
 
 <?php

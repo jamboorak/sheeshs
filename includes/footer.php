@@ -1,7 +1,7 @@
 </main>
 
     <!-- Footer -->
-    <footer class="footer" style="background: #2F58AD !important;">
+    <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">

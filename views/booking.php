@@ -440,7 +440,7 @@ $pageHead = <<<PAGE_HEAD
         }
 
         .booking-page {
-            padding: 0 1rem 4rem;
+            padding: 0 1rem 1.5rem;
             max-width: 1100px;
             margin: 0 auto;
         }
@@ -450,9 +450,9 @@ $pageHead = <<<PAGE_HEAD
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            gap: 1rem;
-            margin: 1.5rem 0 2rem;
-            padding-top: 0.5rem;
+            gap: 0.75rem;
+            margin: 0.5rem 0 1rem;
+            padding-top: 0;
         }
 
         .booking-header h1 {
@@ -469,10 +469,10 @@ $pageHead = <<<PAGE_HEAD
         .booking-controls {
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.75rem;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
         }
 
         .tab-buttons {
@@ -701,8 +701,8 @@ $pageHead = <<<PAGE_HEAD
 
         .booking-cards {
             display: grid;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
             grid-template-columns: 1fr;
             align-items: start;
         }
@@ -1434,9 +1434,9 @@ PAGE_HEAD;
         </div>
 
         <div class="booking-cards" id="bookingCards">
-            <section class="rooms-section">
-                <h2 class="section-title">Rooms</h2>
-                <div class="room-slider-wrapper" style="perspective: 1400px; margin-bottom: 2rem;">
+            <section class="rooms-section" style="margin-top:0;">
+                <h2 class="section-title" style="margin:0 0 0.8rem;">Rooms</h2>
+                <div class="room-slider-wrapper" style="perspective: 1400px; margin-bottom: 0.75rem;">
                     <div class="room-slider" id="roomSlider" style="display: flex; align-items: center; justify-content: center; gap: 3rem; position: relative;">
                         <button onclick="rotateRooms(-1)" style="background: none; border: none; font-size: 2rem; color: #1e3a8a; cursor: pointer; padding: 0; width: 50px; height: 50px; margin-right: 2.5rem; border-radius: 50%; background: #f1f5f9; transition: all 0.3s ease;" onmouseover="this.style.background='#ff7a3d'; this.style.color='white';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#1e3a8a';">
                             <i class="fas fa-chevron-left"></i>
@@ -1493,9 +1493,9 @@ PAGE_HEAD;
                 </div>
             </section>
 
-            <section class="cottages-section" style="margin-top:1.5rem;">
-                <h2 class="section-title">Cottages</h2>
-                <div class="cottage-slider-wrapper" style="perspective: 1400px; margin-bottom: 2rem;">
+            <section class="cottages-section" style="margin-top:0.5rem;">
+                <h2 class="section-title" style="margin:0 0 0.8rem;">Cottages</h2>
+                <div class="cottage-slider-wrapper" style="perspective: 1400px; margin-bottom: 0.75rem;">
                     <div class="cottage-slider" id="cottageSlider" style="display: flex; align-items: center; justify-content: center; gap: 3rem; position: relative;">
                         <button onclick="rotateCottages(-1)" style="background: none; border: none; font-size: 2rem; color: #1e3a8a; cursor: pointer; padding: 0; width: 50px; height: 50px; margin-right: 2.5rem; border-radius: 50%; background: #f1f5f9; transition: all 0.3s ease;" onmouseover="this.style.background='#ff7a3d'; this.style.color='white';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#1e3a8a';">
                             <i class="fas fa-chevron-left"></i>
@@ -2760,9 +2760,9 @@ PAGE_HEAD;
     </div>
 
     <!-- Reservation Toast Notification -->
-    <div id="reservationToast" style="display: none; position: fixed; top: 88px; right: 20px; background: #0d9488; color: white; padding: 1rem 1.25rem; border-radius: 0.75rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 10001; max-width: 340px; animation: slideIn 0.3s ease;">
+    <div id="reservationToast" style="display: none; position: fixed; top: 88px; right: 20px; background: #ffffff; color: #000000; padding: 1rem 1.25rem; border: 2px solid #16a34a; border-radius: 0.75rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 10001; max-width: 340px; animation: slideIn 0.3s ease;">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <i class="fas fa-check-circle" style="font-size: 1.1rem; color: #bbf7d0;"></i>
+            <i class="fas fa-check-circle" style="font-size: 1.1rem; color: #16a34a;"></i>
             <div id="reservationToastMessage" style="font-size: 0.95rem; line-height: 1.35;"></div>
         </div>
     </div>
@@ -2818,13 +2818,13 @@ PAGE_HEAD;
             if (!toast || !toastMessage) {
                 toast = document.createElement('div');
                 toast.id = 'reservationToast';
-                toast.style.cssText = 'display:none;position:fixed;top:88px;right:20px;background:#0d9488;color:white;padding:1rem 1.25rem;border-radius:0.75rem;box-shadow:0 10px 25px rgba(0,0,0,0.2);z-index:10001;max-width:340px;animation:slideIn 0.3s ease;';
+                toast.style.cssText = 'display:none;position:fixed;top:88px;right:20px;background:#ffffff;color:#000000;padding:1rem 1.25rem;border:2px solid #16a34a;border-radius:0.75rem;box-shadow:0 10px 25px rgba(0,0,0,0.2);z-index:10001;max-width:340px;animation:slideIn 0.3s ease;';
                 toastMessage = document.createElement('div');
                 toastMessage.id = 'reservationToastMessage';
                 toastMessage.style.cssText = 'font-size:0.95rem;line-height:1.35;';
                 const icon = document.createElement('i');
                 icon.className = 'fas fa-check-circle';
-                icon.style.cssText = 'font-size:1.1rem;color:#bbf7d0;margin-right:0.75rem;';
+                icon.style.cssText = 'font-size:1.1rem;color:#16a34a;margin-right:0.75rem;';
                 const content = document.createElement('div');
                 content.style.cssText = 'display:flex;align-items:center;gap:0.75rem;';
                 content.appendChild(icon);

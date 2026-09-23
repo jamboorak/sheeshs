@@ -104,7 +104,7 @@ if (isset($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' : ''; ?><?php echo SITE_NAME; ?></title>
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>css/style.css?v=20260917">
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>css/style.css?v=20260922-footer1">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         #loginPopup.login-modal {
@@ -463,7 +463,7 @@ if (isset($_SESSION['user_id'])) {
             </style>
         <?php echo isset($pageHead) ? $pageHead : ''; ?>
 </head>
-<body>
+<body class="public-page <?php echo htmlspecialchars($pageClass ?? '', ENT_QUOTES, 'UTF-8'); ?>">
     <!-- Header -->
     <header class="header">
         <div class="container">
@@ -1090,13 +1090,29 @@ if (isset($_SESSION['user_id'])) {
             </script>
 
     <!-- Flash Messages -->
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="alert alert-success">
-            <?php 
-                echo $_SESSION['success']; 
-                unset($_SESSION['success']);
-            ?>
+    <?php
+        $reviewStatus = $_GET['review_status'] ?? '';
+        $reviewNotification = null;
+        if ($reviewStatus === 'created') {
+            $reviewNotification = 'Your Review is Successfully submitted';
+        } elseif ($reviewStatus === 'updated') {
+            $reviewNotification = 'Your Edited Review is Successfully submitted';
+        }
+    ?>
+    <?php if ($reviewNotification): ?>
+        <div class="review-success-popup" role="status" aria-live="polite">
+            <span class="review-success-icon" aria-hidden="true"><i class="fas fa-check"></i></span>
+            <span class="review-success-message"><?php echo htmlspecialchars($reviewNotification, ENT_QUOTES, 'UTF-8'); ?></span>
+            <button type="button" class="review-success-close" aria-label="Close notification">&times;</button>
         </div>
+        <script>
+            document.querySelector('.review-success-close')?.addEventListener('click', function() {
+                this.closest('.review-success-popup')?.remove();
+            });
+            window.setTimeout(function() {
+                document.querySelector('.review-success-popup')?.remove();
+            }, 5000);
+        </script>
     <?php endif; ?>
 
     <?php if (isset($_SESSION['error']) || isset($_SESSION['login_error'])): ?>
